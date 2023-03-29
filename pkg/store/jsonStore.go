@@ -5,15 +5,14 @@ import (
 	"errors"
 	"os"
 
-	"clase18/internal/domain"
+	"clase19/internal/domain"
 )
 
 type Store interface {
 	GetAll() ([]domain.Product, error)
 	GetOne(id int) (domain.Product, error)
 	AddOne(product domain.Product) error
-	UpdatePut(product domain.Product) error
-	UpdatePatch(product domain.Product) error
+	UpdateOne(product domain.Product) error
 	DeleteOne(id int) error
 	saveProducts(products []domain.Product) error
 	loadProducts() ([]domain.Product, error)
@@ -88,22 +87,7 @@ func (s *jsonStore) AddOne(product domain.Product) error {
 }
 
 // UpdateOne actualiza un producto
-func (s *jsonStore) UpdatePut(product domain.Product) error {
-	products, err := s.loadProducts()
-	if err != nil {
-		return err
-	}
-	for i, p := range products {
-		if p.Id == product.Id {
-			products[i] = product
-			return s.saveProducts(products)
-		}
-	}
-	return errors.New("product not found")
-}
-
-// UpdateOne actualiza un producto
-func (s *jsonStore) UpdatePatch(product domain.Product) error {
+func (s *jsonStore) UpdateOne(product domain.Product) error {
 	products, err := s.loadProducts()
 	if err != nil {
 		return err

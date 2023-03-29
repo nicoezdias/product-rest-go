@@ -3,13 +3,12 @@ package handler
 import (
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 
-	"clase18/internal/domain"
-	"clase18/internal/product"
-	"clase18/pkg/web"
+	"clase19/internal/domain"
+	"clase19/internal/product"
+	"clase19/pkg/web"
 
 	"github.com/gin-gonic/gin"
 )
@@ -107,12 +106,7 @@ func (h *productHandler) ConsumerPrice() gin.HandlerFunc {
 func (h *productHandler) Post() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var product domain.Product
-		err := validateToken(c)
-		if err != nil {
-			web.Failure(c, 401, err)
-			return
-		}
-		err = c.ShouldBindJSON(&product)
+		err := c.ShouldBindJSON(&product)
 		if err != nil {
 			web.Failure(c, 400, errors.New("invalid json"))
 			return
@@ -139,11 +133,6 @@ func (h *productHandler) Post() gin.HandlerFunc {
 // Put actualiza un producto
 func (h *productHandler) Put() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := validateToken(c)
-		if err != nil {
-			web.Failure(c, 401, err)
-			return
-		}
 		idParam := c.Param("id")
 		id, err := strconv.Atoi(idParam)
 		if err != nil {
@@ -166,7 +155,7 @@ func (h *productHandler) Put() gin.HandlerFunc {
 			web.Failure(c, 400, err)
 			return
 		}
-		p, err := h.s.UpdateProductPut(id, product)
+		p, err := h.s.UpdateProduct(id, product)
 		if err != nil {
 			web.Failure(c, 400, err)
 			return
@@ -178,11 +167,6 @@ func (h *productHandler) Put() gin.HandlerFunc {
 // Post crear un producto nuevo
 func (h *productHandler) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := validateToken(c)
-		if err != nil {
-			web.Failure(c, 401, err)
-			return
-		}
 		idParam := c.Param("id")
 		id, err := strconv.Atoi(idParam)
 		if err != nil {
@@ -192,11 +176,15 @@ func (h *productHandler) Patch() gin.HandlerFunc {
 		var product domain.Product
 		err = c.BindJSON(&product)
 		if err != nil {
-
 			web.Failure(c, 400, err)
 			return
 		}
-		p, err := h.s.UpdateProductPatch(id, product)
+		valid, err := validateExpiration(&product)
+		if !valid {
+			web.Failure(c, 400, err)
+			return
+		}
+		p, err := h.s.UpdateProduct(id, product)
 		if err != nil {
 
 			web.Failure(c, 400, err)
@@ -209,11 +197,6 @@ func (h *productHandler) Patch() gin.HandlerFunc {
 // Delete elimina un producto por su id
 func (h *productHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		err := validateToken(c)
-		if err != nil {
-			web.Failure(c, 401, err)
-			return
-		}
 		idParam := c.Param("id")
 		id, err := strconv.Atoi(idParam)
 		if err != nil {
@@ -270,17 +253,4 @@ func validateExpiration(product *domain.Product) (bool, error) {
 		return false, errors.New("invalid expiration date, date must be between 1 and 31/12/9999")
 	}
 	return true, nil
-}
-
-// validateToken valida que el token sea valido
-func validateToken(c *gin.Context) error {
-	token := c.GetHeader("TOKEN")
-	if token == "" {
-		return errors.New("token not found")
-	}
-
-	if token != os.Getenv("TOKEN") {
-		return errors.New("invalid token")
-	}
-	return nil
 }

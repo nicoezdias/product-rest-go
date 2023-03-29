@@ -1,9 +1,10 @@
 package main
 
 import (
-	"clase18/cmd/server/handler"
-	"clase18/internal/product"
-	"clase18/pkg/store"
+	"clase19/cmd/server/handler"
+	"clase19/internal/product"
+	"clase19/pkg/middleware"
+	"clase19/pkg/store"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -21,7 +22,9 @@ func main() {
 	service := product.NewService(repo)
 	productHandler := handler.NewProductHandler(service)
 
-	r := gin.Default()
+	r := gin.New()
+	r.Use(gin.Recovery())
+	r.Use(middleware.Logger())
 
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
 	products := r.Group("/products")
@@ -30,10 +33,10 @@ func main() {
 		products.GET(":id", productHandler.GetByID())
 		products.GET("/search", productHandler.Search())
 		products.GET("/consumer_price", productHandler.ConsumerPrice())
-		products.POST("", productHandler.Post())
-		products.PUT(":id", productHandler.Put())
-		products.PATCH(":id", productHandler.Patch())
-		products.DELETE(":id", productHandler.Delete())
+		products.POST("", middleware.Authentication(), productHandler.Post())
+		products.PUT(":id", middleware.Authentication(), productHandler.Put())
+		products.PATCH(":id", middleware.Authentication(), productHandler.Patch())
+		products.DELETE(":id", middleware.Authentication(), productHandler.Delete())
 	}
 	r.Run(":8080")
 }

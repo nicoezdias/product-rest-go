@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 
-	"clase18/internal/domain"
-	"clase18/pkg/store"
+	"clase19/internal/domain"
+	"clase19/pkg/store"
 )
 
 type Repository interface {
@@ -14,8 +14,7 @@ type Repository interface {
 	SearchPriceGt(price float64) []domain.Product
 	ConsumerPrice(listIdsInt []int) ([]domain.Product, float64, error)
 	Create(p domain.Product) (domain.Product, error)
-	UpdateProductPut(id int, p domain.Product) (domain.Product, error)
-	UpdateProductPatch(id int, updatedProduct domain.Product) (domain.Product, error)
+	UpdateProduct(id int, updatedProduct domain.Product) (domain.Product, error)
 	Delete(id int) error
 }
 
@@ -131,24 +130,12 @@ func (r *repository) validateCodeValue(codeValue string) bool {
 	return true
 }
 
-// Update actualiza un producto
-func (r *repository) UpdateProductPut(id int, p domain.Product) (domain.Product, error) {
-	if !r.validateCodeValue(p.CodeValue) {
-		return domain.Product{}, errors.New("code value already exists")
-	}
-	err := r.storage.UpdatePut(p)
-	if err != nil {
-		return domain.Product{}, errors.New("error updating product")
-	}
-	return p, nil
-}
-
-// UpdateProduct actualiza los atributos que cambiaron
-func (r *repository) UpdateProductPatch(id int, updatedProduct domain.Product) (domain.Product, error) {
+// UpdateProduct actualiza un producto
+func (r *repository) UpdateProduct(id int, updatedProduct domain.Product) (domain.Product, error) {
 	if !r.validateCodeValue(updatedProduct.CodeValue) {
 		return domain.Product{}, errors.New("code value already exists")
 	}
-	err := r.storage.UpdatePut(updatedProduct)
+	err := r.storage.UpdateOne(updatedProduct)
 	if err != nil {
 		return domain.Product{}, errors.New("error updating product")
 	}

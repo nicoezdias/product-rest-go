@@ -2,9 +2,8 @@ package product
 
 import (
 	"errors"
-	"fmt"
 
-	"clase18/internal/domain"
+	"clase19/internal/domain"
 )
 
 type Service interface {
@@ -13,8 +12,7 @@ type Service interface {
 	SearchPriceGt(price float64) ([]domain.Product, error)
 	ConsumerPrice(listIdsInt []int) ([]domain.Product, float64, error)
 	Create(p domain.Product) (domain.Product, error)
-	UpdateProductPut(id int, p domain.Product) (domain.Product, error)
-	UpdateProductPatch(id int, updatedProduct domain.Product) (domain.Product, error)
+	UpdateProduct(id int, updatedProduct domain.Product) (domain.Product, error)
 	Delete(id int) error
 }
 
@@ -69,20 +67,10 @@ func (s *service) Create(p domain.Product) (domain.Product, error) {
 	return p, nil
 }
 
-// Update actualiza un producto
-func (s *service) UpdateProductPut(id int, u domain.Product) (domain.Product, error) {
-	p, err := s.r.UpdateProductPut(id, u)
+// UpdateProduct actualiza un producto
+func (s *service) UpdateProduct(id int, updatedProduct domain.Product) (domain.Product, error) {
+	p, err := s.r.UpdateProduct(id, updatedProduct)
 	if err != nil {
-		return domain.Product{}, err
-	}
-	return p, nil
-}
-
-// UpdateProduct actualiza los atributos que cambiaron
-func (s *service) UpdateProductPatch(id int, updatedProduct domain.Product) (domain.Product, error) {
-	p, err := s.r.UpdateProductPatch(id, updatedProduct)
-	if err != nil {
-		fmt.Println(err)
 		return domain.Product{}, err
 	}
 	return p, nil
