@@ -23,6 +23,6 @@ func Logger() gin.HandlerFunc {
 		}
 		elapsed := time.Since(t)
 
-		fmt.Printf("time: %v\npath: %s\nverb: %s\nresponse size: %d\nelapsed time: %v", t, path, verb, size, elapsed)
+		fmt.Printf("time: %v\npath: %s\nverb: %s\nresponse size: %d\nelapsed time: %v\n", t, path, verb, size, elapsed)
 	}
 }
