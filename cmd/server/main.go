@@ -2,21 +2,35 @@ package main
 
 import (
 	"clase19/cmd/server/handler"
+	"clase19/docs"
 	"clase19/internal/product"
 	"clase19/pkg/middleware"
 	"clase19/pkg/store"
 	"log"
+	"os"
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @title Products Market
+// @version 1.0
+// @description This API Handle Products.
+// @termsOfService https://developers.ctd.com.ar/es_ar/terminos-y-condiciones
+
+// @contact.name API Support
+// @contact.url https://developers.ctd.com.ar/support
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatal("error loading .env file")
 	}
 
-	storage := store.NewStore("/Users/nicolasdias/Desktop/CTD/B3/Back/C16/products.json")
+	storage := store.NewStore("../../products.json")
 
 	repo := product.NewRepository(storage)
 	service := product.NewService(repo)
@@ -27,6 +41,11 @@ func main() {
 	r.Use(middleware.Logger())
 
 	r.GET("/ping", func(c *gin.Context) { c.String(200, "pong") })
+
+	docs.SwaggerInfo.Host = os.Getenv("HOST")
+	r.GET("/docs/*any",
+		ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	products := r.Group("/products")
 	{
 		products.GET("", productHandler.GetAll())

@@ -24,7 +24,14 @@ func NewProductHandler(s product.Service) *productHandler {
 	}
 }
 
-// GetAll obtiene todos los productos
+// GetAll godoc
+// @Summary      Get all products
+// @Description  Get all products from repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Success      200 {object}  web.response
+// @Router       /products [get]
 func (h *productHandler) GetAll() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		products, _ := h.s.GetAll()
@@ -32,7 +39,17 @@ func (h *productHandler) GetAll() gin.HandlerFunc {
 	}
 }
 
-// GetByID obtiene un producto por su id
+// GetByID godoc
+// @Summary      Get a product by Id
+// @Description  Get a product by Id from repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        id   path      int  true  "Product Id"
+// @Success      200 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products/:id [get]
 func (h *productHandler) GetByID() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
@@ -50,7 +67,17 @@ func (h *productHandler) GetByID() gin.HandlerFunc {
 	}
 }
 
-// Search busca un producto por precio mayor a un valor
+// Search godoc
+// @Summary      Get  products by price
+// @Description  Get  products whose price is greater than a value from repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        priceGt   query      float64  true  "Price Gt"
+// @Success      200 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products/search [get]
 func (h *productHandler) Search() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		priceParam := c.Query("priceGt")
@@ -68,7 +95,17 @@ func (h *productHandler) Search() gin.HandlerFunc {
 	}
 }
 
-// ConsumerPrice devuelve el precio de una lista de productos
+// ConsumerPrice godoc
+// @Summary      Returns a price and a list
+// @Description  Returns the price of a list of products and the list
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        list   query      []int  true  "List Ids"
+// @Success      200 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products/consumer_price [get]
 func (h *productHandler) ConsumerPrice() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		type response struct {
@@ -102,7 +139,17 @@ func (h *productHandler) ConsumerPrice() gin.HandlerFunc {
 	}
 }
 
-// Post crear un producto nuevo
+// Post godoc
+// @Summary      Create a new product
+// @Description  Create a new product in repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        body body domain.Product true "Product"
+// @Success      201 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products [post]
 func (h *productHandler) Post() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var product domain.Product
@@ -130,7 +177,18 @@ func (h *productHandler) Post() gin.HandlerFunc {
 	}
 }
 
-// Put actualiza un producto
+// Put godoc
+// @Summary      Update a product by id
+// @Description  Update a product by id in repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        body body domain.Product true "Product"
+// @Param        id   path      int  true  "Product Id"
+// @Success      200 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products/:id [put]
 func (h *productHandler) Put() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
@@ -164,7 +222,18 @@ func (h *productHandler) Put() gin.HandlerFunc {
 	}
 }
 
-// Post crear un producto nuevo
+// Patch godoc
+// @Summary      Update a product
+// @Description  Update a product by id in repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        body body domain.Product true "Product"
+// @Param        id   path      int  true  "Product Id"
+// @Success      200 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products/:id [patch]
 func (h *productHandler) Patch() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
@@ -195,6 +264,17 @@ func (h *productHandler) Patch() gin.HandlerFunc {
 }
 
 // Delete elimina un producto por su id
+// Delete godoc
+// @Summary      Delete a product
+// @Description  Delete a product by id in repository
+// @Tags         products
+// @Produce      json
+// @Param        token header string true "token"
+// @Param        id   path      int  true  "Product Id"
+// @Success      200 {object}  web.response
+// @Failure      400 {object}  web.errorResponse
+// @Failure      404 {object}  web.errorResponse
+// @Router       /products/:id [delete]
 func (h *productHandler) Delete() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		idParam := c.Param("id")
