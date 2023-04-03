@@ -109,11 +109,11 @@ func (r *repository) Create(p domain.Product) (domain.Product, error) {
 	if !r.validateCodeValue(p.CodeValue) {
 		return domain.Product{}, errors.New("code value already exists")
 	}
-	err := r.storage.AddOne(p)
+	product, err := r.storage.AddOne(p)
 	if err != nil {
 		return domain.Product{}, errors.New("error creating product")
 	}
-	return p, nil
+	return product, nil
 }
 
 // validateCodeValue valida que el codigo no exista en la lista de productos
@@ -161,42 +161,3 @@ func validProduct(product domain.Product) error {
 	}
 	return nil
 }
-
-// loadProducts carga los productos desde un archivo json
-// func loadProducts(path string, list *[]domain.Product) {
-// 	file, err := os.ReadFile(path)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// 	err = json.Unmarshal([]byte(file), &list)
-// 	if err != nil {
-// 		panic(err)
-// 	}
-// }
-
-// completeEmptyAttributes compara dos productos y se queda con los campos diferentes
-// func (r *repository) completeEmptyAttributes(product domain.Product, updatedProduct domain.Product) (domain.Product, error) {
-// 	p := product
-// 	if updatedProduct.Name != "" {
-// 		p.Name = updatedProduct.Name
-// 	}
-// 	if updatedProduct.Quantity != 0 {
-// 		p.Quantity = updatedProduct.Quantity
-// 	}
-// 	if updatedProduct.CodeValue != "" {
-// 		if !r.validateCodeValue(updatedProduct.CodeValue) {
-// 			return domain.Product{}, errors.New("code value already exists")
-// 		}
-// 		p.CodeValue = updatedProduct.CodeValue
-// 	}
-// 	if updatedProduct.IsPublished {
-// 		p.IsPublished = updatedProduct.IsPublished
-// 	}
-// 	if updatedProduct.Expiration != "" {
-// 		p.Expiration = updatedProduct.Expiration
-// 	}
-// 	if updatedProduct.Price != 0.0 {
-// 		p.Price = updatedProduct.Price
-// 	}
-// 	return p, nil
-// }

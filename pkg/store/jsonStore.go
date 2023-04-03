@@ -8,18 +8,15 @@ import (
 	"clase19/internal/domain"
 )
 
-type Store interface {
-	GetAll() ([]domain.Product, error)
-	GetOne(id int) (domain.Product, error)
-	AddOne(product domain.Product) error
-	UpdateOne(product domain.Product) error
-	DeleteOne(id int) error
-	saveProducts(products []domain.Product) error
-	loadProducts() ([]domain.Product, error)
-}
-
 type jsonStore struct {
 	pathToFile string
+}
+
+// NewJsonStore crea un nuevo store de products
+func NewJsonStore(path string) Store {
+	return &jsonStore{
+		pathToFile: path,
+	}
 }
 
 // loadProducts carga los productos desde un archivo json
@@ -43,13 +40,6 @@ func (s *jsonStore) saveProducts(products []domain.Product) error {
 		return err
 	}
 	return os.WriteFile(s.pathToFile, bytes, 0644)
-}
-
-// NewJsonStore crea un nuevo store de products
-func NewStore(path string) Store {
-	return &jsonStore{
-		pathToFile: path,
-	}
 }
 
 // GetAll devuelve todos los productos
@@ -76,14 +66,18 @@ func (s *jsonStore) GetOne(id int) (domain.Product, error) {
 }
 
 // AddOne agrega un nuevo producto
-func (s *jsonStore) AddOne(product domain.Product) error {
+func (s *jsonStore) AddOne(product domain.Product) (domain.Product, error) {
 	products, err := s.loadProducts()
 	if err != nil {
-		return err
+		return domain.Product{}, err
 	}
 	product.Id = len(products) + 1
 	products = append(products, product)
-	return s.saveProducts(products)
+	err = s.saveProducts(products)
+	if err != nil {
+		return domain.Product{}, err
+	}
+	return product, nil
 }
 
 // UpdateOne actualiza un producto

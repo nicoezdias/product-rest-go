@@ -316,7 +316,7 @@ func validateEmptys(product *domain.Product) (bool, error) {
 
 // validateExpiration valida que la fecha de expiracion sea valida
 func validateExpiration(product *domain.Product) (bool, error) {
-	dates := strings.Split(product.Expiration, "/")
+	dates := strings.Split(product.Expiration, "-")
 	list := []int{}
 	if len(dates) != 3 {
 		return false, errors.New("invalid expiration date, must be in format: dd/mm/yyyy")
@@ -328,7 +328,7 @@ func validateExpiration(product *domain.Product) (bool, error) {
 		}
 		list = append(list, number)
 	}
-	condition := (list[0] < 1 || list[0] > 31) && (list[1] < 1 || list[1] > 12) && (list[2] < 1 || list[2] > 9999)
+	condition := (list[2] < 1 || list[2] > 31) && (list[1] < 1 || list[1] > 12) && (list[0] < 1 || list[0] > 9999)
 	if condition {
 		return false, errors.New("invalid expiration date, date must be between 1 and 31/12/9999")
 	}

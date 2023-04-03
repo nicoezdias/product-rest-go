@@ -6,10 +6,12 @@ import (
 	"clase19/internal/product"
 	"clase19/pkg/middleware"
 	"clase19/pkg/store"
+	"database/sql"
 	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -30,7 +32,16 @@ func main() {
 		log.Fatal("error loading .env file")
 	}
 
-	storage := store.NewStore("../../products.json")
+	db, err := sql.Open("mysql", os.Getenv("DB_URL"))
+	if err != nil {
+		panic(err.Error())
+	}
+	errPing := db.Ping()
+	if errPing != nil {
+		panic(errPing.Error())
+	}
+	storage := store.NewSqlStore(db)
+	// storage := store.NewJsonStore("../../products.json")
 
 	repo := product.NewRepository(storage)
 	service := product.NewService(repo)
