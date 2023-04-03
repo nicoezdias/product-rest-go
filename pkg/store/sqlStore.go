@@ -88,7 +88,7 @@ func (s *sqlStore) UpdateOne(product domain.Product) error {
 	if err != nil {
 		return err
 	}
-	stmt, err := s.DB.Prepare("UPDATE products(Name, Quantity, CodeValue, IsPublished, Expiration, Price) VALUES( ?, ?, ?, ?)")
+	stmt, err := s.DB.Prepare("UPDATE products(Name, Quantity, CodeValue, IsPublished, Expiration, Price) VALUES( ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		return err
 	}
